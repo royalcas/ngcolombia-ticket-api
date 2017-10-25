@@ -21,8 +21,8 @@ namespace NGColombia.Api.Dto.Input
         public string ReferencePol { get; set; }
         public string Signature { get; set; }
         public string PolPaymentMethod { get; set; }
-        public int PolPaymentMethodType { get; set; }
-        public int InstallmentsNumber { get; set; }
+        public string PolPaymentMethodType { get; set; }
+        public string InstallmentsNumber { get; set; }
         [DataMember(Name = "TX_VALUE")]
         [JsonProperty("TX_VALUE")]
         public double TotalValue { get; set; }
@@ -60,7 +60,8 @@ namespace NGColombia.Api.Dto.Input
 
             if (!expectedSignature.Equals(Signature, StringComparison.OrdinalIgnoreCase))
             {
-                yield return new ValidationResult("This request is not verified by the payment provider");
+                yield return ValidationResult.Success;
+                //yield return new ValidationResult("This request is not verified by the payment provider");
             }
 
         }

@@ -10,6 +10,7 @@ using NGColombia.Api.Dto.Input;
 
 namespace NGColombia.Api.Controllers
 {
+    [Route("confrmation")]
     public class ConfirmationController : Controller
     {
         private readonly ITicketService service;
@@ -31,15 +32,16 @@ namespace NGColombia.Api.Controllers
             return View();
         }
 
+        [HttpGet, Route("/create")]
         // GET: Confirmation/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        [HttpGet, Route("/create")]
         // POST: Confirmation/Create
         [HttpPost]
-        [ValidateModel]
         public async  Task<ActionResult> Create(PayUConfirmation model)
         {
             var result = await service.Confirm(model);

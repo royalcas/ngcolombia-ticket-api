@@ -47,28 +47,25 @@ namespace NGColombia.Api.Controllers
             }
 
         }
-
-        [HttpPost, Route("~/purchase/confirmation")]
-        public async Task<ObjectResult> Confirmation()
+        [ValidateModel]
+        [HttpPost, Route("confirmation")]
+        public async Task<ObjectResult> Confirmation(PayUConfirmation model)
         {
             try
             {
-                appInsights.TrackEvent("Confirmation Arrived!" );
-                //var result = await service.Confirm(model);
-                //eturn Ok(result);
+                var result = await service.Confirm(model);
+                return Ok(result);
             }
             catch (Exception ex)
             {
                 appInsights.TrackException(ex);
                 throw;
             }
-            return Ok(true);
         }
         
-        [HttpGet, Route("~/purchase/confirmation")]
+        [HttpGet, Route("confirmation")]
         public async Task<ObjectResult> ConfirmationPage()
         {
-            appInsights.TrackEvent("Confirmation Arrived!" );
             return Ok(true);
         }
 

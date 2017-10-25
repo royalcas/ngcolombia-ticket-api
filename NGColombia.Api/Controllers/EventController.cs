@@ -19,10 +19,18 @@ namespace NGColombia.Api.Controllers
             this.service = service;
         }
 
-        [HttpGet, Route("api/event/availabletickets")]
+        [HttpGet, Route("availabletickets")]
         public async Task<ActionResult> TicketsAvailable()
         {
             return Ok(await service.GetAvailableTicketsSummary());
         }
+
+        [HttpGet, Route("transactions")]
+        public async Task<ActionResult> Transactions()
+        {
+            return Ok(await service.GetTransactions());
+        }
     }
+
+
 }

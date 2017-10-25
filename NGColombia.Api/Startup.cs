@@ -31,11 +31,12 @@ namespace NGColombia.Api
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 }); 
 
             services.AddDbContext<NGColombiaDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("NGColombiaDatabase")));
 
-            // Add application services.
+           
             services.AddTransient<ITicketService, TicketService>();
             services.AddTransient<IEventService, EventService>();
             services.AddTransient<IPaymentProvider, PaymentProvider>();
@@ -53,7 +54,14 @@ namespace NGColombia.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            // Add application services.
+            app.UseCors(builder =>
+                builder.WithOrigins("*")
+                       .AllowAnyHeader()
+                );
+
             app.UseMvc();
         }
     }
+
 }

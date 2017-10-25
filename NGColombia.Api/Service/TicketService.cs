@@ -107,6 +107,7 @@ namespace NGColombia.Api.Service
             var transaction = new Transaction();
             transaction.ConfirmationDate = DateTime.Now;
             transaction.Customer = new Customer();
+            transaction.Customer.IdentificationNumber = inputTransaction.CustomerId;
             transaction.Customer.Email = inputTransaction.Email;
             transaction.Customer.Name = inputTransaction.CustomerName;
             transaction.Customer.PhoneNumber = inputTransaction.CustomerPhoneNumber;

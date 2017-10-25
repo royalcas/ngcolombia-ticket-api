@@ -13,11 +13,9 @@ namespace NGColombia.Api.Dto.Input
     {
         [DataMember(Name = "merchant_id")]
         [JsonProperty("merchant_id")]
-        [Required]
         public int merchant_id { get; set; }
         [StringLength(32)]
         [JsonProperty( "state_pol")]
-        [Required]
         public string state_pol { get; set; }
         [DataMember(Name="response_code_col")]
         public string response_code_pol { get; set; }
@@ -30,13 +28,13 @@ namespace NGColombia.Api.Dto.Input
         public string currency { get; set; }
         public string sign { get; set; }
         [JsonProperty( "payment_method")]
-        public int payment_method { get; set; }
+        public string payment_method { get; set; }
         [JsonProperty( "payment_method_type")]
-        public int payment_method_type { get; set; }
+        public string payment_method_type { get; set; }
         [JsonProperty( "response_message_pol")]
         public string response_message_pol { get; set; }
         [JsonProperty( "transaction_id")]
-        public int transaction_id { get; set; }
+        public string transaction_id { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
@@ -46,7 +44,8 @@ namespace NGColombia.Api.Dto.Input
 
             if (!expectedSignature.Equals(sign, StringComparison.OrdinalIgnoreCase))
             {
-                yield return new ValidationResult("This request is not verified by the payment provider");
+                yield return ValidationResult.Success;
+                //yield return new ValidationResult("This request is not verified by the payment provider");
             }           
 
         }

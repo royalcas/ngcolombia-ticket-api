@@ -23,9 +23,23 @@
             var ticketTypes = await context.TicketTypes
                                 .Include(type => type.Details)
                                     .ThenInclude(detail => detail.Transaction)
+                                    .ThenInclude(process => process.Responses)
                                     .ToListAsync();
 
             return MapToOutput(ticketTypes);
+        }
+
+        public async Task<IEnumerable<Transaction>> GetTransactions()
+        {
+            var transactions = await context.Transactions
+                                .Include(type => type.Details)
+                                .Include(transaction => transaction.Responses)
+                                .Include(transaction => transaction.Confirmations)
+                                .Include(transaction => transaction.Customer)
+                                .Where(tran => !tran.IsTestTransaction)
+                                .ToListAsync();
+
+            return transactions;
         }
 
         private IEnumerable<AvailableTicketInformation> MapToOutput(IEnumerable<TicketType> types)
