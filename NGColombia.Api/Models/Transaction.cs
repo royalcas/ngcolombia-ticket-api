@@ -14,6 +14,8 @@ namespace NGColombia.Api.Models
         public double TotalValue { get; set; }
         public string Signature { get; set; }
         public bool Approved { get; set; }
+        public bool Closed { get; set; }
+        public string Status { get; set; }
         public bool IsTestTransaction { get; set; }
 
         public IEnumerable<TransactionTicketDetail> Details { get; set; }

@@ -8,6 +8,11 @@ using System.Threading.Tasks;
 using NGColombia.Api.Models;
 using System.Security.Cryptography;
 using System.Text;
+using NGColombia.Api.Dto.Input.PayUContracts;
+using RestSharp;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace NGColombia.Api.Service
 {
@@ -68,6 +73,30 @@ namespace NGColombia.Api.Service
             var signature = $"{this.payUSettings.Value.ApiKey}~{this.payUSettings.Value.MerchantId}~{referenceId}~{value:0.0#}~{currency}~{statePol}";
             return MD5Hash(signature);
         }
-    }
 
+        public async Task<OrderDetailByReferenceIdResponse> GetOrderByReferenceId(string transactionId)
+        {
+            var body = new PayUQueryOrderByReferenceId(payUSettings.Value.AppLogin, payUSettings.Value.ApiKey, transactionId);
+            return await this.ExecutePayUQuery<PayUQueryOrderByReferenceId, OrderDetailByReferenceIdResponse>(body);
+        }
+
+        public async Task<TransactionResultPayU> GetTransactionDetail(string transactionId)
+        {
+            var body = new PayUQueryOrderByTransactionId(payUSettings.Value.AppLogin, payUSettings.Value.ApiKey, transactionId);
+            return await this.ExecutePayUQuery<PayUQueryOrderByTransactionId, TransactionResultPayU>(body);
+        }
+
+        public async Task<TResponse> ExecutePayUQuery<TQuery, TResponse>(TQuery query)
+        {
+            TaskCompletionSource<IRestResponse> taskCompletion = new TaskCompletionSource<IRestResponse>();
+            var client = new RestClient(payUSettings.Value.ApiUrl);
+            var request = new RestRequest(string.Empty, Method.POST);
+            request.AddHeader("Content-type", "application/json");
+            request.AddJsonBody(query);
+            var handle = client.ExecuteAsync(request, r => taskCompletion.SetResult(r));
+            IRestResponse response = (RestResponse)(await taskCompletion.Task);
+            var responseObject = JsonConvert.DeserializeObject<TResponse>(response.Content);
+            return responseObject;
+        }
+    }
 }

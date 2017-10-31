@@ -77,5 +77,13 @@ namespace NGColombia.Api.Controllers
             return Ok(result);
         }
 
+        [ValidateModel]
+        [HttpGet, Route("search")]
+        public async Task<ObjectResult> ReceiveResponse([FromQuery] CustomerTransactionsQuery query)
+        {
+            var result = await service.FindCustomerTickets(query.query);
+            return Ok(result);
+        }
+
     }
 }

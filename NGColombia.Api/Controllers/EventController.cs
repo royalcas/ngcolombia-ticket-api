@@ -30,6 +30,11 @@ namespace NGColombia.Api.Controllers
         {
             return Ok(await service.GetTransactions());
         }
+        [HttpGet, Route("processPending")]
+        public async Task<ActionResult> ProcessPending()
+        {
+            return Ok(await service.ConfirmPendingTransactions());
+        }
     }
 
 

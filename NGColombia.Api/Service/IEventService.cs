@@ -9,5 +9,6 @@ namespace NGColombia.Api.Service
     {
         Task<IEnumerable<AvailableTicketInformation>> GetAvailableTicketsSummary();
         Task<IEnumerable<Transaction>> GetTransactions();
+        Task<int> ConfirmPendingTransactions();
     }
 }

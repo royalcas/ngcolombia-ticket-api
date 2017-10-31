@@ -15,5 +15,7 @@ namespace NGColombia.Api.Settings
         public string ApiKey { get; set; }
         public string Test { get; set; }
         public string Currency { get; set; }
+        public string AppLogin { get; set; }
+        public string ApiUrl { get; set; }
     }
 }

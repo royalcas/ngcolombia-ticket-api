@@ -11,9 +11,10 @@ using System;
 namespace NGColombia.Api.Migrations
 {
     [DbContext(typeof(NGColombiaDbContext))]
-    partial class NGColombiaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171026045125_AdditionalInformationRelatedWithClosedTransactionsAndStatus")]
+    partial class AdditionalInformationRelatedWithClosedTransactionsAndStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

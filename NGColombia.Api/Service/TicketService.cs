@@ -24,6 +24,29 @@ namespace NGColombia.Api.Service
             this.eventService = eventService;
         }
 
+        public async Task<IEnumerable<Transaction>> FindCustomerTickets(string query)
+        {
+            var transaction = await context.Transactions
+                                .Include(tran => tran.Customer)
+                                .Where(tran => !tran.IsTestTransaction && query.Equals(tran.Id.ToString("D"), StringComparison.OrdinalIgnoreCase))
+                                .SingleOrDefaultAsync();
+
+            var identificationNumber = query;
+
+            if (transaction != null)
+            {
+                identificationNumber = transaction.Customer.IdentificationNumber;
+            }
+            
+            return await context.Transactions
+                            .Include(type => type.Details)
+                            .Include(tran => tran.Responses)
+                            .Include(tran => tran.Confirmations)
+                            .Include(tran => tran.Customer)
+                            .Where(tran => !tran.IsTestTransaction & tran.Customer.IdentificationNumber.Equals(identificationNumber))
+                            .ToListAsync();
+        }
+
         public async Task<PaymentProviderForm> SaveInitialTransaction(TransactionInputModel inputTransaction)
         {
             await ValidateTransaction(inputTransaction);
@@ -75,7 +98,7 @@ namespace NGColombia.Api.Service
             var notAvaliableTickets = from ticket in availableTickets
                                       join currentPurchaseTicket in inputTransaction.Tickets
                                           on ticket.Code equals currentPurchaseTicket.TicketCode
-                                      where ticket.AvailableTickets <= currentPurchaseTicket.Quantity
+                                      where ticket.AvailableTickets < currentPurchaseTicket.Quantity
                                       select ticket;
 
             if (notAvaliableTickets.Any())
@@ -184,13 +207,22 @@ namespace NGColombia.Api.Service
             {
                 Success = success
             };
-
-            if (success)
-            {
-                await ApproveTransaction(log.TransactionId);
-            }
+            
+            await SaveTransactionConfirmation(log.TransactionId, log);
+            
 
             return transactionResult;
+        }
+
+        private async Task SaveTransactionConfirmation(Guid transactionId, PaymentConfirmationLog log)
+        {
+            var transaction = await context.Transactions.SingleOrDefaultAsync(tran => tran.Id == transactionId);
+            transaction.ConfirmationDate = DateTime.Now;
+            transaction.Approved = log.StatePol.Equals("4");
+            transaction.Closed = true;
+            transaction.Status = log.ResponseMessagePol;
+            context.Entry(transaction).State = EntityState.Modified;
+            await context.SaveChangesAsync();
         }
 
         private async Task ApproveTransaction(Guid transactionId)
